@@ -43,10 +43,20 @@ interface Metadata {
 }
 
 interface SquidData {
-	data: { globalStateById: { idleWorkerPInstant: number; idleWorkerCount: number } };
+	data: {
+		globalStateById: {
+			idleWorkerPInit: number;
+			idleWorkerPInstant: number;
+			idleWorkerCount: number;
+			workerCount: number;
+			totalValue: string;
+		};
+	};
 }
 
-const squidQuery = JSON.stringify({ query: `query {globalStateById(id: "0"){idleWorkerPInstant idleWorkerCount}}` });
+const squidQuery = JSON.stringify({
+	query: `query {globalStateById(id: "0"){idleWorkerPInit idleWorkerPInstant idleWorkerCount workerCount}}`,
+});
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -72,13 +82,19 @@ export default {
 			phalaSendXcmMessageCount: phalaMeta.data.send_xcm_message_count,
 			phalaReceivedXcmMessageCount: phalaMeta.data.received_xcm_message_count,
 			phalaSignedExtrinsicCount: phalaMetadata.data.count_signed_extrinsic,
+			phalaIdlePInit: phalaSquid.data.globalStateById.idleWorkerPInit,
 			phalaIdlePInstant: phalaSquid.data.globalStateById.idleWorkerPInstant,
 			phalaIdleWorkerCount: phalaSquid.data.globalStateById.idleWorkerCount,
+			phalaWorkerCount: phalaSquid.data.globalStateById.workerCount,
+			phalaTotalValue: phalaSquid.data.globalStateById.totalValue,
 			khalaSendXcmMessageCount: khalaMeta.data.send_xcm_message_count,
 			khalaReceivedXcmMessageCount: khalaMeta.data.received_xcm_message_count,
 			khalaSignedExtrinsicCount: khalaMetadata.data.count_signed_extrinsic,
+			khalaIdlePInit: khalaSquid.data.globalStateById.idleWorkerPInit,
 			khalaIdlePInstant: khalaSquid.data.globalStateById.idleWorkerPInstant,
 			khalaIdleWorkerCount: khalaSquid.data.globalStateById.idleWorkerCount,
+			khalaWorkerCount: khalaSquid.data.globalStateById.workerCount,
+			khalaTotalValue: khalaSquid.data.globalStateById.totalValue,
 		};
 
 		return new Response(JSON.stringify(json), {
